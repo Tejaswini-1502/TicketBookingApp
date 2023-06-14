@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 )
 
 // below are the package level variables
@@ -12,7 +11,14 @@ const confTicket = 50
 
 var remainingTickets = 50
 
-var bookings_slice = make([]map[string]string, 0) //slice(dynamic)
+var bookings_slice = make([]UserData, 0) //slice(dynamic)
+
+type UserData struct {
+	firstName  string
+	lastName   string
+	email      string
+	userTicket int
+}
 
 func main() {
 
@@ -63,7 +69,7 @@ func greetUsers() {
 func getFirstNames() []string {
 	firstNames := []string{}
 	for _, booking := range bookings_slice {
-		firstNames = append(firstNames, booking["firstName"])
+		firstNames = append(firstNames, booking.firstName)
 
 	}
 	return firstNames
@@ -90,11 +96,12 @@ func getUserInput() (string, string, string, int) {
 
 func bookTicket(firstName string, lastName string, email string, userTicket int) {
 	//creating a map for the user
-	var userData = make(map[string]string)
-	userData["firstName"] = firstName
-	userData["lastName"] = lastName
-	userData["email"] = email
-	userData["userTicket"] = strconv.Itoa(userTicket)
+	var userData = UserData{
+		firstName:  firstName,
+		lastName:   lastName,
+		email:      email,
+		userTicket: userTicket,
+	}
 	bookings_slice = append(bookings_slice, userData)
 	fmt.Printf("Thank you %v %v with email %v has booked %v tickets.\n", firstName, lastName, email, userTicket)
 	remainingTickets = remainingTickets - userTicket
