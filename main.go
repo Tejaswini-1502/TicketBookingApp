@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"sync"
+	"time"
 )
 
 // below are the package level variables
@@ -20,6 +22,8 @@ type UserData struct {
 	userTicket int
 }
 
+var wg = sync.WaitGroup{}
+
 func main() {
 
 	greetUsers()
@@ -34,6 +38,11 @@ func main() {
 		if isValidName && isValidEmail && isValidTicket {
 			// book tickets
 			bookTicket(firstName, lastName, email, userTicket)
+
+			//sending the tickets via email
+			//creating a separate go routine that executes the sendTicket function
+			wg.Add(1)
+			go sendTicket(userTicket, firstName, lastName, email)
 
 			//printing the first names
 			firstNames := getFirstNames()
@@ -57,7 +66,7 @@ func main() {
 		}
 
 	}
-
+	wg.Wait()
 }
 
 func greetUsers() {
@@ -107,4 +116,17 @@ func bookTicket(firstName string, lastName string, email string, userTicket int)
 	remainingTickets = remainingTickets - userTicket
 	fmt.Printf("%v tickets are remaining for the %v\n", remainingTickets, confName)
 	fmt.Printf("List of Bookings: %v\n", bookings_slice)
+}
+
+func sendTicket(userTicket int, firstName string, lastName string, email string) {
+
+	//simulating the delay in generating the ticket by sleeping for 10 seconds
+	time.Sleep(10 * time.Second)
+
+	//Sprintf allows to format the string as well as save the string in a variable
+	var ticket = fmt.Sprintf("%v tickets for %v %v", userTicket, firstName, lastName)
+	fmt.Println("**************")
+	fmt.Printf("Sending ticket:\n %v\nto email address %v\n", ticket, email)
+	fmt.Println("**************")
+	wg.Done()
 }
