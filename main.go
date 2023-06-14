@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // below are the package level variables
@@ -12,7 +12,7 @@ const confTicket = 50
 
 var remainingTickets = 50
 
-var bookings_slice []string //slice(dynamic)
+var bookings_slice = make([]map[string]string, 0) //slice(dynamic)
 
 func main() {
 
@@ -63,9 +63,7 @@ func greetUsers() {
 func getFirstNames() []string {
 	firstNames := []string{}
 	for _, booking := range bookings_slice {
-		var name = strings.Fields(booking)
-		var first = name[0]
-		firstNames = append(firstNames, first)
+		firstNames = append(firstNames, booking["firstName"])
 
 	}
 	return firstNames
@@ -91,8 +89,15 @@ func getUserInput() (string, string, string, int) {
 }
 
 func bookTicket(firstName string, lastName string, email string, userTicket int) {
-	bookings_slice = append(bookings_slice, firstName+" "+lastName)
+	//creating a map for the user
+	var userData = make(map[string]string)
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+	userData["userTicket"] = strconv.Itoa(userTicket)
+	bookings_slice = append(bookings_slice, userData)
 	fmt.Printf("Thank you %v %v with email %v has booked %v tickets.\n", firstName, lastName, email, userTicket)
 	remainingTickets = remainingTickets - userTicket
 	fmt.Printf("%v tickets are remaining for the %v\n", remainingTickets, confName)
+	fmt.Printf("List of Bookings: %v\n", bookings_slice)
 }
